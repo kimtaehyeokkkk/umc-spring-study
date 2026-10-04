@@ -2,6 +2,7 @@ package com.umc.study.controller;
 
 import com.umc.study.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +31,15 @@ public class BookController {
     }
 
     @PostMapping
-    public String createBook(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<String> createBook(@RequestBody Map<String, Object> body) {
+        Object categoryId = body.get("categoryId");
+        Object title = body.get("title");
+
+        if (categoryId == null || !(title instanceof String t) || t.isBlank()) {
+            return ResponseEntity.badRequest().body("categoryId와 title은 필수입니다.");
+        }
+
         bookService.createBook(body);
-        return "도서 등록이 완료되었습니다!";
+        return ResponseEntity.ok("도서 등록이 완료되었습니다!");
     }
 }
