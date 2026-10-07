@@ -15,4 +15,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // 3주차 GET /books/category/{categoryId} 유지용
     @EntityGraph(attributePaths = "category")
     List<Book> findAllByCategory_CategoryIdOrderByBookIdDesc(Long categoryId);
+
+    // 선택 심화: 제목에 keyword가 포함된 도서 검색 (LIKE '%keyword%')
+    @EntityGraph(attributePaths = "category")
+    List<Book> findByTitleContainingOrderByBookIdDesc(String keyword);
 }

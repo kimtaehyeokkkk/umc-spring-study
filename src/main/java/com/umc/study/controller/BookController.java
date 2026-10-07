@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,9 +24,10 @@ public class BookController {
 
     private final BookService bookService;
 
+    // keyword가 없으면 전체 목록, 있으면 제목 검색
     @GetMapping
-    public List<BookResponse> getBooks() {
-        return bookService.getBooks();
+    public List<BookResponse> getBooks(@RequestParam(required = false) String keyword) {
+        return bookService.getBooks(keyword);
     }
 
     @GetMapping("/category/{categoryId}")
