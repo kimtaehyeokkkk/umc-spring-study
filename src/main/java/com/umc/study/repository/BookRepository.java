@@ -19,4 +19,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // 선택 심화: 제목에 keyword가 포함된 도서 검색 (LIKE '%keyword%')
     @EntityGraph(attributePaths = "category")
     List<Book> findByTitleContainingOrderByBookIdDesc(String keyword);
+
+    // 선택 심화: 같은 제목의 도서가 이미 있는지 확인
+    boolean existsByTitle(String title);
 }

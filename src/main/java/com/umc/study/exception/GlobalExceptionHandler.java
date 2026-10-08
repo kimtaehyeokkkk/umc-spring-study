@@ -1,6 +1,7 @@
 package com.umc.study.exception;
 
 import com.umc.study.dto.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), message));
     }
 
-    // JSON 형식 오류 (예: categoryId에 "abc" 같은 문자열)
+    // JSON 형식 오류 (예: 빈 Body, categoryId에 "abc" 같은 문자열)
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException e) {
         return ResponseEntity.badRequest()
@@ -37,5 +38,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCategoryNotFound(CategoryNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), e.getMessage()));
+    }
+
+    // 같은 제목의 도서 (Service 사전 확인)
+    @ExceptionHandler(DuplicateBookTitleException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateTitle(DuplicateBookTitleException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage()));
+    }
+
+    // DB 제약 위반 안전망 (동시 요청으로 사전 확인을 함께 통과한 경우 등)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(HttpStatus.CONFLICT.value(), "데이터 제약 조건에 위배되는 요청입니다."));
     }
 }

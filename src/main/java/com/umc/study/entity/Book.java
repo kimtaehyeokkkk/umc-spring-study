@@ -29,7 +29,8 @@ public class Book {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 100)
+    // DB에 uk_book_title UNIQUE 제약이 있음
+    @Column(nullable = false, length = 100, unique = true)
     private String title;
 
     @Column(columnDefinition = "TEXT")

@@ -5,6 +5,7 @@ import com.umc.study.dto.CreateBookRequest;
 import com.umc.study.entity.Book;
 import com.umc.study.entity.Category;
 import com.umc.study.exception.CategoryNotFoundException;
+import com.umc.study.exception.DuplicateBookTitleException;
 import com.umc.study.repository.BookRepository;
 import com.umc.study.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,10 @@ public class BookService {
     public BookResponse createBook(CreateBookRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(request.categoryId()));
+
+        if (bookRepository.existsByTitle(request.title())) {
+            throw new DuplicateBookTitleException(request.title());
+        }
 
         Book book = new Book(category, request.title(), request.description());
         return BookResponse.from(bookRepository.save(book));
